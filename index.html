@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>STUDYHUB</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #0f1115;
+      --surface: #171923;
+      --text: #e6e6e6;
+      --muted: #a9b0be;
+      --accent: #3ecf8e; /* configurable */
+      --danger: #ff5a5f;
+      --warning: #f9a825;
+      --radius: 14px;
+      --shadow: 0 10px 30px rgba(0,0,0,0.35);
+      --font: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      --size: 16px; /* configurable */
+    }
+    [data-theme="light"] {
+      --bg: #f5f7fb;
+      --surface: #ffffff;
+      --text: #1b1f27;
+      --muted: #4a5260;
+      --shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    * { box-sizing: border-box }
+    html, body { height: 100% }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: var(--font); font-size: var(--size);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .app {
+      width: 100%; max-width: 1100px; padding: 24px;
+    }
+
+    /* Top bar */
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: 0.5px;
+    }
+    .brand-logo {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), #6bd1ff);
+      display: grid; place-items: center; color: #111; font-weight: 900;
+      box-shadow: var(--shadow);
+    }
+    .actions { display: flex; gap: 8px; align-items: center }
+    .chip {
+      background: var(--surface); color: var(--muted); border: 1px solid #2a2f3a;
+      padding: 8px 12px; border-radius: 999px;
+    }
+
+    /* Cards grid */
+    .grid {
+      display: grid; gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid #2a2f3a; border-radius: var(--radius);
+      padding: 18px; box-shadow: var(--shadow);
+      transition: transform .12s ease, border-color .12s ease;
+      cursor: pointer; min-height: 110px; display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .card:hover { transform: translateY(-2px); border-color: var(--accent) }
+    .card h3 { margin: 0 0 6px 0; font-size: 18px }
+    .card p { margin: 0; color: var(--muted); font-size: 13px }
+
+    /* Sections */
+    .section {
+      background: var(--surface);
+      border: 1px solid #2a2f3a; border-radius: var(--radius);
+      padding: 20px; box-shadow: var(--shadow); margin-top: 16px;
+    }
+    .section h2 { margin: 0 0 12px 0; font-size: 20px }
+
+    /* Inputs */
+    .row { display: flex; gap: 12px; flex-wrap: wrap }
+    .input, select, textarea {
+      width: 100%;
+      background: #111318; color: var(--text);
+      border: 1px solid #2a2f3a; border-radius: 12px;
+      padding: 12px 14px; outline: none;
+    }
+    textarea { min-height: 100px; resize: vertical }
+    .input::placeholder, textarea::placeholder { color: #768198 }
+
+    /* Buttons */
+    .btn {
+      background: var(--accent); color: #0b0e14; border: none;
+      padding: 10px 16px; border-radius: 10px; font-weight: 700; cursor: pointer;
+    }
+    .btn.secondary { background: #2a2f3a; color: var(--text) }
+    .btn.danger { background: var(--danger); color: #fff }
+    .btn.ghost { background: transparent; border: 1px solid #2a2f3a; color: var(--text) }
+    .stack { display: flex; gap: 8px; flex-wrap: wrap }
+
+    /* Table */
+    table { width: 100%; border-collapse: collapse; margin-top: 12px }
+    th, td {
+      border-bottom: 1px solid #2a2f3a; text-align: left; padding: 10px;
+    }
+    th { color: var(--muted); font-weight: 600 }
+
+    /* Pills + badges */
+    .pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: #111318; border: 1px solid #2a2f3a; color: var(--muted) }
+    .badge { padding: 4px 8px; border-radius: 999px; background: #13261d; color: #8ff2c1; border: 1px solid #1c3c2e; font-size: 12px }
+
+    /* Auth */
+    .center-box {
+      width: 100%; max-width: 440px; margin: 0 auto;
+      background: var(--surface); border: 1px solid #2a2f3a; border-radius: var(--radius);
+      padding: 22px; box-shadow: var(--shadow);
+    }
+    .center-box h1 { margin: 0 0 8px 0; font-size: 24px }
+    .muted { color: var(--muted) }
+
+    /* Footer help tips */
+    .tips { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); margin-top: 12px }
+    .tip { background: #111318; border: 1px solid #2a2f3a; border-radius: 12px; padding: 12px }
+
+    /* Hidden utility */
+    .hidden { display: none !important }
+  </style>
+</head>
+<body>
+  <div class="app">
+
+    <!-- Top bar -->
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-logo"><span>&lt;/&gt;</span></div>
+        <span>STUDYHUB</span>
+      </div>
+      <div class="actions">
+        <span id="userChip" class="chip hidden"></span>
+        <button id="logoutBtn" class="btn secondary hidden">Cerrar sesión</button>
+      </div>
+    </div>
+
+    <!-- Welcome -->
+    <div id="welcome" class="center-box">
+      <h1>¡Bienvenido!</h1>
+      <p class="muted">Organiza tus tareas, notas y calendario en un solo lugar.</p>
+      <div class="stack">
+        <button class="btn" onclick="showAuth('login')">Iniciar sesión</button>
+        <button class="btn ghost" onclick="showAuth('signup')">Crear cuenta</button>
+      </div>
+    </div>
+
+    <!-- Auth -->
+    <div id="auth" class="center-box hidden">
+      <h1 id="authTitle">Iniciar sesión</h1>
+      <p id="authDesc" class="muted">Ingresa tu correo y contraseña para continuar.</p>
+      <div class="row">
+        <input id="email" class="input" type="email" placeholder="Correo electrónico" />
+        <input id="password" class="input" type="password" placeholder="Contraseña (mín. 6 caracteres)" />
+      </div>
+      <div class="stack">
+        <button id="authAction" class="btn">Entrar</button>
+        <button class="btn secondary" onclick="cancelAuth()">Cancelar</button>
+      </div>
+      <p id="authHint" class="muted" style="margin-top:8px"></p>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="hidden">
+      <div class="grid">
+        <div class="card" onclick="openSection('tasks')">
+          <h3>Registro de tareas</h3>
+          <p>Agrega, edita y elimina tareas asignadas.</p>
+        </div>
+        <div class="card" onclick="openSection('calendar')">
+          <h3>Calendario</h3>
+          <p>Selecciona mes y día, añade actividades y notas.</p>
+        </div>
+        <div class="card" onclick="openSection('notes')">
+          <h3>Notas</h3>
+          <p>Guarda ideas y pendientes con formato libre.</p>
+        </div>
+        <div class="card" onclick="openSection('history')">
+          <h3>Historial</h3>
+          <p>Resumen de cambios y actividad reciente.</p>
+        </div>
+        <div class="card" onclick="openSection('profile')">
+          <h3>Perfil</h3>
+          <p>Edita tu nombre, info y teléfono.</p>
+        </div>
+        <div class="card" onclick="openSection('settings')">
+          <h3>Configuración</h3>
+          <p>Personaliza tema, acento y tamaño de texto.</p>
+        </div>
+        <div class="card" onclick="openSection('help')">
+          <h3>Ayuda</h3>
+          <p>Consejos rápidos para aprovechar la página.</p>
+        </div>
+      </div>
+
+      <!-- Sections -->
+      <div id="section-tasks" class="section hidden">
+        <h2>Registro de tareas</h2>
+        <div class="row">
+          <input id="taskName" class="input" placeholder="Nombre y apellido" />
+          <input id="taskTitle" class="input" placeholder="Tarea asignada" />
+          <select id="taskStatus" class="input">
+            <option value="pendiente">Pendiente</option>
+            <option value="en-progreso">En progreso</option>
+            <option value="terminada">Terminada</option>
+          </select>
+          <button class="btn" onclick="addTask()">Agregar tarea</button>
+        </div>
+        <table id="tasksTable">
+          <thead>
+            <tr><th>#</th><th>Nombre</th><th>Tarea</th><th>Estado</th><th>Acciones</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div id="section-calendar" class="section hidden">
+        <h2>Calendario</h2>
+        <div class="row">
+          <select id="calMonth" class="input"></select>
+          <select id="calYear" class="input"></select>
+          <button class="btn" onclick="renderCalendar()">Mostrar</button>
+        </div>
+        <div id="calendarGrid" style="margin-top:12px"></div>
+        <div class="row" style="margin-top:12px">
+          <input id="calActivityDay" class="input" type="number" min="1" max="31" placeholder="Día" />
+          <input id="calActivityText" class="input" placeholder="Actividad (ej. Entrega de proyecto)" />
+          <button class="btn" onclick="addCalendarActivity()">Agregar actividad</button>
+        </div>
+        <div id="calActivitiesList" style="margin-top:12px"></div>
+        <div class="row" style="margin-top:12px">
+          <textarea id="calNotes" class="input" placeholder="Anotaciones del mes"></textarea>
+          <button class="btn secondary" onclick="saveCalNotes()">Guardar anotaciones</button>
+        </div>
+      </div>
+
+      <div id="section-notes" class="section hidden">
+        <h2>Notas</h2>
+        <div class="row">
+          <input id="noteTitle" class="input" placeholder="Título de la nota" />
+          <textarea id="noteText" class="input" placeholder="Tu mensaje..."></textarea>
+        </div>
+        <div class="stack" style="margin-top:8px">
+          <button class="btn" onclick="addNote()">Guardar nota</button>
+          <button class="btn secondary" onclick="clearNotes()">Borrar todas</button>
+        </div>
+        <div id="notesList" style="margin-top:12px"></div>
+      </div>
+
+      <div id="section-history" class="section hidden">
+        <h2>Historial</h2>
+        <p class="muted">Registro de cambios recientes:</p>
+        <div id="historyList" class="tips"></div>
+      </div>
+
+      <div id="section-profile" class="section hidden">
+        <h2>Perfil</h2>
+        <div class="row">
+          <input id="profileName" class="input" placeholder="Nombre de usuario" />
+          <input id="profileInfo" class="input" placeholder="Info" />
+          <input id="profilePhone" class="input" placeholder="Número de teléfono" />
+        </div>
+        <div class="stack" style="margin-top:8px">
+          <button class="btn" onclick="saveProfile()">Guardar perfil</button>
+          <span id="profileStatus" class="pill">Sin guardar</span>
+        </div>
+      </div>
+
+      <div id="section-settings" class="section hidden">
+        <h2>Configuración</h2>
+        <div class="row">
+          <select id="themeSelect" class="input">
+            <option value="dark">Tema oscuro</option>
+            <option value="light">Tema claro</option>
+          </select>
+          <select id="accentSelect" class="input">
+            <option value="#3ecf8e">Verde</option>
+            <option value="#6bd1ff">Azul</option>
+            <option value="#ff8f6b">Naranja</option>
+            <option value="#c47bff">Morado</option>
+            <option value="#ff5a5f">Rojo</option>
+          </select>
+          <select id="fontSizeSelect" class="input">
+            <option value="15px">Pequeño</option>
+            <option value="16px" selected>Normal</option>
+            <option value="18px">Grande</option>
+            <option value="20px">Muy grande</option>
+          </select>
+        </div>
+        <div class="stack" style="margin-top:8px">
+          <button class="btn" onclick="applySettings()">Aplicar</button>
+          <button class="btn secondary" onclick="resetSettings()">Restablecer</button>
+        </div>
+        <p class="muted" style="margin-top:8px">Los cambios se guardan en tu navegador.</p>
+      </div>
+
+      <div id="section-help" class="section hidden">
+        <h2>Ayuda</h2>
+        <div class="tips">
+          <div class="tip"><b>Inicio de sesión:</b> Usa un correo válido y una contraseña de al menos 6 caracteres. Puedes crear tu cuenta y luego iniciar.</div>
+          <div class="tip"><b>Tareas:</b> Agrega nombre y tarea. Cambia el estado para dar seguimiento. Usa eliminar para limpiar.</div>
+          <div class="tip"><b>Calendario:</b> Selecciona mes y año, haz clic en Mostrar. Añade actividades por día y guarda anotaciones.</div>
+          <div class="tip"><b>Notas:</b> Crea notas rápidas con título y contenido. Se guardan y puedes borrarlas todas si lo necesitas.</div>
+          <div class="tip"><b>Perfil:</b> Edita tus datos y guarda. Todo queda en tu navegador, sin servidor.</div>
+          <div class="tip"><b>Configuración:</b> Personaliza tema, acento y tamaño de texto para mayor comodidad.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== Utilidad de storage por usuario =====
+    const KEY_USERS = "sh_users";
+    const KEY_SESSION = "sh_session";
+    const KEY_SETTINGS = "sh_settings";
+
+    function getUsers() {
+      return JSON.parse(localStorage.getItem(KEY_USERS) || "{}");
+    }
+    function setUsers(obj) {
+      localStorage.setItem(KEY_USERS, JSON.stringify(obj));
+    }
+    function getSession() {
+      return JSON.parse(localStorage.getItem(KEY_SESSION) || "null");
+    }
+    function setSession(email) {
+      localStorage.setItem(KEY_SESSION, JSON.stringify({ email }));
+    }
+    function clearSession() {
+      localStorage.removeItem(KEY_SESSION);
+    }
+    function userKey(email, suffix) {
+      return `sh_${email}_${suffix}`;
+    }
+
+    // ===== UI helpers =====
+    function show(elId) { document.getElementById(elId).classList.remove("hidden"); }
+    function hide(elId) { document.getElementById(elId).classList.add("hidden"); }
+    function toast(msg) { alert(msg); } // simple
+
+    // ===== Auth UI =====
+    function showAuth(mode) {
+      hide("welcome"); show("auth");
+      const title = document.getElementById("authTitle");
+      const desc = document.getElementById("authDesc");
+      const action = document.getElementById("authAction");
+      const hint = document.getElementById("authHint");
+      hint.textContent = "";
+      if (mode === "login") {
+        title.textContent = "Iniciar sesión";
+        desc.textContent = "Ingresa tu correo y contraseña para continuar.";
+        action.textContent = "Entrar";
+        action.onclick = doLogin;
+      } else {
+        title.textContent = "Crear cuenta";
+        desc.textContent = "Registra tu correo y contraseña para usar STUDYHUB.";
+        action.textContent = "Crear y entrar";
+        action.onclick = doSignup;
+      }
+    }
+    function cancelAuth() {
+      hide("auth"); show("welcome");
+      document.getElementById("email").value = "";
+      document.getElementById("password").value = "";
+      document.getElementById("authHint").textContent = "";
+    }
+    function validateEmail(email) {
+      // Validación razonable de correo
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+      return re.test(String(email).toLowerCase());
+    }
+    function validatePassword(pw) {
+      return typeof pw === "string" && pw.length >= 6;
+    }
+    function doSignup() {
+      const email = document.getElementById("email").value.trim();
+      const pw = document.getElementById("password").value;
+      const hint = document.getElementById("authHint");
+
+      if (!validateEmail(email)) { hint.textContent = "Correo inválido."; return; }
+      if (!validatePassword(pw)) { hint.textContent = "La contraseña debe tener al menos 6 caracteres."; return; }
+
+      const users = getUsers();
+      if (users[email]) { hint.textContent = "Ese correo ya existe. Inicia sesión."; return; }
+      users[email] = { password: pw, createdAt: Date.now() };
+      setUsers(users);
+      setSession(email);
+      hint.textContent = "";
+      enterApp(email);
+    }
+    function doLogin() {
+      const email = document.getElementById("email").value.trim();
+      const pw = document.getElementById("password").value;
+      const hint = document.getElementById("authHint");
+
+      if (!validateEmail(email)) { hint.textContent = "Correo inválido."; return; }
+      if (!validatePassword(pw)) { hint.textContent = "Contraseña demasiado corta."; return; }
+
+      const users = getUsers();
+      if (!users[email]) { hint.textContent = "No existe una cuenta con ese correo."; return; }
+      if (users[email].password !== pw) { hint.textContent = "Contraseña incorrecta."; return; }
+
+      setSession(email);
+      hint.textContent = "";
+      enterApp(email);
+    }
+
+    // ===== Entrar / Salir =====
+    function enterApp(email) {
+      hide("welcome"); hide("auth"); show("dashboard");
+      document.getElementById("userChip").textContent = email;
+      document.getElementById("userChip").classList.remove("hidden");
+      document.getElementById("logoutBtn").classList.remove("hidden");
+      loadAllForUser(email);
+    }
+    function logout() {
+      clearSession();
+      document.getElementById("userChip").classList.add("hidden");
+      document.getElementById("logoutBtn").classList.add("hidden");
+      hide("dashboard"); hideSections();
+      show("welcome");
+    }
+    document.getElementById("logoutBtn").onclick = logout;
+
+    // ===== Secciones =====
+    function hideSections() {
+      ["section-tasks","section-calendar","section-notes","section-history","section-profile","section-settings","section-help"]
+        .forEach(hide);
+    }
+    function openSection(key) {
+      hideSections();
+      const id = `section-${key}`;
+      show(id);
+      // render específicos
+      const email = getSession()?.email;
+      if (!email) return;
+      if (key === "tasks") renderTasks(email);
+      if (key === "calendar") { ensureCalendarSelectors(); renderCalendar(); }
+      if (key === "notes") renderNotes(email);
+      if (key === "history") renderHistory(email);
+      if (key === "profile") loadProfile(email);
+      if (key === "settings") loadSettings();
+    }
+
+    // ===== Tareas (CRUD) =====
+    function getTasks(email) {
+      return JSON.parse(localStorage.getItem(userKey(email, "tasks")) || "[]");
+    }
+    function setTasks(email, arr) {
+      localStorage.setItem(userKey(email, "tasks"), JSON.stringify(arr));
+      pushHistory(email, "Actualización de tareas (" + arr.length + ")");
+    }
+    function addTask() {
+      const email = getSession()?.email; if (!email) return;
+      const name = document.getElementById("taskName").value.trim();
+      const title = document.getElementById("taskTitle").value.trim();
+      const status = document.getElementById("taskStatus").value;
+      if (!name || !title) { toast("Completa nombre y tarea."); return; }
+      const tasks = getTasks(email);
+      tasks.push({ id: Date.now(), name, title, status });
+      setTasks(email, tasks);
+      document.getElementById("taskTitle").value = "";
+      renderTasks(email);
+    }
+    function renderTasks(email) {
+      const tbody = document.querySelector("#tasksTable tbody");
+      const tasks = getTasks(email);
+      tbody.innerHTML = tasks.map((t, i) => `
+        <tr>
+          <td>${i+1}</td>
+          <td>${t.name}</td>
+          <td>${t.title}</td>
+          <td><span class="badge">${t.status}</span></td>
+          <td class="stack">
+            <button class="btn secondary" onclick="editTask(${t.id})">Editar</button>
+            <button class="btn danger" onclick="deleteTask(${t.id})">Eliminar</button>
+          </td>
+        </tr>
+      `).join("");
+    }
+    function editTask(id) {
+      const email = getSession()?.email; if (!email) return;
+      const tasks = getTasks(email);
+      const t = tasks.find(x => x.id === id); if (!t) return;
+      const newTitle = prompt("Nueva descripción de tarea:", t.title);
+      const newStatus = prompt("Estado (pendiente/en-progreso/terminada):", t.status);
+      if (newTitle && newStatus) {
+        t.title = newTitle.trim(); t.status = newStatus.trim();
+        setTasks(email, tasks); renderTasks(email);
+      }
+    }
+    function deleteTask(id) {
+      const email = getSession()?.email; if (!email) return;
+      const tasks = getTasks(email).filter(x => x.id !== id);
+      setTasks(email, tasks); renderTasks(email);
+    }
+
+    // ===== Calendario =====
+    const MONTHS = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+    function ensureCalendarSelectors() {
+      const mSel = document.getElementById("calMonth");
+      const ySel = document.getElementById("calYear");
+      if (mSel.options.length === 0) {
+        MONTHS.forEach((m, i) => {
+          const opt = document.createElement("option");
+          opt.value = i; opt.textContent = m; mSel.appendChild(opt);
+        });
+        const yearNow = new Date().getFullYear();
+        for (let y = yearNow - 2; y <= yearNow + 2; y++) {
+          const opt = document.createElement("option");
+          opt.value = y; opt.textContent = y; ySel.appendChild(opt);
+        }
+        mSel.value = new Date().getMonth();
+        ySel.value = yearNow;
+      }
+    }
+    function daysInMonth(monthIndex, year) {
+      return new Date(year, monthIndex + 1, 0).getDate();
+    }
+    function getCal(email, monthIndex, year) {
+      const key = userKey(email, `cal_${year}_${monthIndex}`);
+      return JSON.parse(localStorage.getItem(key) || '{"activities":[],"notes":""}');
+    }
+    function setCal(email, monthIndex, year, data) {
+      const key = userKey(email, `cal_${year}_${monthIndex}`);
+      localStorage.setItem(key, JSON.stringify(data));
+      pushHistory(email, `Calendario ${MONTHS[monthIndex]} ${year} actualizado`);
+    }
+    function renderCalendar() {
+      const email = getSession()?.email; if (!email) return;
+      const m = parseInt(document.getElementById("calMonth").value, 10);
+      const y = parseInt(document.getElementById("calYear").value, 10);
+      const days = daysInMonth(m, y);
+      const grid = document.getElementById("calendarGrid");
+      grid.innerHTML = "";
+      const header = document.createElement("div");
+      header.className = "stack";
+      header.innerHTML = `<span class="pill">Mes: ${MONTHS[m]}</span><span class="pill">Año: ${y}</span><span class="pill">Días: ${days}</span>`;
+      grid.appendChild(header);
+
+      const table = document.createElement("table");
+      const thead = document.createElement("thead");
+      thead.innerHTML = `<tr>
+        <th>Lunes</th><th>Martes</th><th>Miércoles</th><th>Jueves</th><th>Viernes</th><th>Sábado</th><th>Domingo</th>
+      </tr>`;
+      table.appendChild(thead);
+
+      const tbody = document.createElement("tbody");
+      let day = 1;
+      // Render 5-6 semanas
+      for (let week = 0; week < 6 && day <= days; week++) {
+        const tr = document.createElement("tr");
+        for (let d = 0; d < 7; d++) {
+          const td = document.createElement("td");
+          if (day <= days) {
+            td.innerHTML = `<div class="stack"><span class="pill">Día ${day}</span></div>`;
+            day++;
+          }
+          tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+      }
+      table.appendChild(tbody);
+      grid.appendChild(table);
+
+      // Activities list
+      const cal = getCal(email, m, y);
+      const list = document.getElementById("calActivitiesList");
+      list.innerHTML = "<h3>Actividades</h3>" + (cal.activities.length ? "" : "<p class='muted'>Sin actividades.</p>");
+      cal.activities.forEach((a, idx) => {
+        const row = document.createElement("div");
+        row.className = "stack";
+        row.style.margin = "6px 0";
+        row.innerHTML = `
+          <span class="pill">Día ${a.day}</span>
+          <span class="pill">${a.text}</span>
+          <button class="btn danger" onclick="deleteCalendarActivity(${idx})">Eliminar</button>
+        `;
+        list.appendChild(row);
+      });
+      document.getElementById("calNotes").value = cal.notes || "";
+    }
+    function addCalendarActivity() {
+      const email = getSession()?.email; if (!email) return;
+      const m = parseInt(document.getElementById("calMonth").value, 10);
+      const y = parseInt(document.getElementById("calYear").value, 10);
+      const day = parseInt(document.getElementById("calActivityDay").value, 10);
+      const text = document.getElementById("calActivityText").value.trim();
+      const days = daysInMonth(m, y);
+      if (!day || day < 1 || day > days || !text) { toast("Verifica día y actividad."); return; }
+      const cal = getCal(email, m, y);
+      cal.activities.push({ day, text });
+      setCal(email, m, y, cal);
+      document.getElementById("calActivityText").value = "";
+      renderCalendar();
+    }
+    function deleteCalendarActivity(idx) {
+      const email = getSession()?.email; if (!email) return;
+      const m = parseInt(document.getElementById("calMonth").value, 10);
+      const y = parseInt(document.getElementById("calYear").value, 10);
+      const cal = getCal(email, m, y);
+      cal.activities.splice(idx, 1);
+      setCal(email, m, y, cal);
+      renderCalendar();
+    }
+    function saveCalNotes() {
+      const email = getSession()?.email; if (!email) return;
+      const m = parseInt(document.getElementById("calMonth").value, 10);
+      const y = parseInt(document.getElementById("calYear").value, 10);
+      const cal = getCal(email, m, y);
+      cal.notes = document.getElementById("calNotes").value;
+      setCal(email, m, y, cal);
+      toast("Anotaciones guardadas.");
+    }
+
+    // ===== Notas (CRUD) =====
+    function getNotes(email) {
+      return JSON.parse(localStorage.getItem(userKey(email, "notes")) || "[]");
+    }
+    function setNotes(email, arr) {
+      localStorage.setItem(userKey(email, "notes"), JSON.stringify(arr));
+      pushHistory(email, "Notas actualizadas (" + arr.length + ")");
+    }
+    function addNote() {
+      const email = getSession()?.email; if (!email) return;
+      const title = document.getElementById("noteTitle").value.trim();
+      const text = document.getElementById("noteText").value.trim();
+      if (!title || !text) { toast("Agrega título y contenido."); return; }
+      const notes = getNotes(email);
+      notes.push({ id: Date.now(), title, text });
+      setNotes(email, notes);
+      document.getElementById("noteTitle").value = "";
+      document.getElementById("noteText").value = "";
+      renderNotes(email);
+    }
+    function renderNotes(email) {
+      const container = document.getElementById("notesList");
+      const notes = getNotes(email);
+      if (!notes.length) { container.innerHTML = "<p class='muted'>Sin notas.</p>"; return; }
+      container.innerHTML = notes.map(n => `
+        <div class="tip">
+          <b>${n.title}</b>
+          <p style="margin:6px 0">${n.text}</p>
+          <div class="stack">
+            <button class="btn secondary" onclick="editNote(${n.id})">Editar</button>
+            <button class="btn danger" onclick="deleteNote(${n.id})">Eliminar</button>
+          </div>
+        </div>
+      `).join("");
+    }
+    function editNote(id) {
+      const email = getSession()?.email; if (!email) return;
+      const notes = getNotes(email);
+      const n = notes.find(x => x.id === id); if (!n) return;
+      const title = prompt("Nuevo título:", n.title);
+      const text = prompt("Nuevo contenido:", n.text);
+      if (title && text) {
+        n.title = title.trim(); n.text = text.trim();
+        setNotes(email, notes); renderNotes(email);
+      }
+    }
+    function deleteNote(id) {
+      const email = getSession()?.email; if (!email) return;
+      const notes = getNotes(email).filter(x => x.id !== id);
+      setNotes(email, notes); renderNotes(email);
+    }
+    function clearNotes() {
+      const email = getSession()?.email; if (!email) return;
+      if (!confirm("¿Borrar todas las notas?")) return;
+      setNotes(email, []); renderNotes(email);
+    }
+
+    // ===== Historial =====
+    function getHistory(email) {
+      return JSON.parse(localStorage.getItem(userKey(email, "history")) || "[]");
+    }
+    function pushHistory(email, text) {
+      const hist = getHistory(email);
+      hist.unshift({ id: Date.now(), text, at: new Date().toLocaleString() });
+      localStorage.setItem(userKey(email, "history"), JSON.stringify(hist.slice(0, 50)));
+    }
+    function renderHistory(email) {
+      const list = document.getElementById("historyList");
+      const hist = getHistory(email);
+      if (!hist.length) { list.innerHTML = "<div class='tip'>Sin actividad reciente.</div>"; return; }
+      list.innerHTML = hist.map(h => `<div class="tip"><b>${h.text}</b><p class="muted" style="margin:4px 0">${h.at}</p></div>`).join("");
+    }
+
+    // ===== Perfil =====
+    function getProfile(email) {
+      return JSON.parse(localStorage.getItem(userKey(email, "profile")) || '{"name":"","info":"","phone":""}');
+    }
+    function setProfile(email, profile) {
+      localStorage.setItem(userKey(email, "profile"), JSON.stringify(profile));
+      pushHistory(email, "Perfil actualizado");
+    }
+    function loadProfile(email) {
+      const p = getProfile(email);
+      document.getElementById("profileName").value = p.name || "";
+      document.getElementById("profileInfo").value = p.info || "";
+      document.getElementById("profilePhone").value = p.phone || "";
+      document.getElementById("profileStatus").textContent = "Sin guardar";
+    }
+    function saveProfile() {
+      const email = getSession()?.email; if (!email) return;
+      const profile = {
+        name: document.getElementById("profileName").value.trim(),
+        info: document.getElementById("profileInfo").value.trim(),
+        phone: document.getElementById("profilePhone").value.trim()
+      };
+      setProfile(email, profile);
+      document.getElementById("profileStatus").textContent = "Guardado";
+      toast("Perfil guardado.");
+    }
+
+    // ===== Configuración =====
+    function getSettings() {
+      return JSON.parse(localStorage.getItem(KEY_SETTINGS) || '{"theme":"dark","accent":"#3ecf8e","size":"16px"}');
+    }
+    function setSettings(s) {
+      localStorage.setItem(KEY_SETTINGS, JSON.stringify(s));
+    }
+    function applySettingsToDOM(s) {
+      document.documentElement.setAttribute("data-theme", s.theme);
+      document.documentElement.style.setProperty("--accent", s.accent);
+      document.documentElement.style.setProperty("--size", s.size);
+    }
+    function loadSettings() {
+      const s = getSettings();
+      document.getElementById("themeSelect").value = s.theme;
+      document.getElementById("accentSelect").value = s.accent;
+      document.getElementById("fontSizeSelect").value = s.size;
+    }
+    function applySettings() {
+      const s = {
+        theme: document.getElementById("themeSelect").value,
+        accent: document.getElementById("accentSelect").value,
+        size: document.getElementById("fontSizeSelect").value
+      };
+      setSettings(s); applySettingsToDOM(s);
+      toast("Configuración aplicada.");
+    }
+    function resetSettings() {
+      const s = { theme: "dark", accent: "#3ecf8e", size: "16px" };
+      setSettings(s); applySettingsToDOM(s); loadSettings();
+      toast("Configuración restablecida.");
+    }
+
+    // ===== Boot: sesión y settings =====
+    window.addEventListener("DOMContentLoaded", () => {
+      applySettingsToDOM(getSettings());
+
+      const sess = getSession();
+      if (sess?.email) {
+        enterApp(sess.email);
+      } else {
+        show("welcome");
+      }
+    });
+
+    // ===== Entradas: eventos útiles =====
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") hideSections();
+    });
+  </script>
+</body>
+</html>
